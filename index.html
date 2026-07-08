@@ -8,113 +8,102 @@
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-    font-family:Arial,sans-serif;
-    background:linear-gradient(135deg,#0b1026,#3b0764);
-    color:white;
-    min-height:100vh;
-    overflow-x:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#0b1026,#3b0764);
+overflow-x:hidden;
+color:#fff;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
 }
 
 canvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:0;
-}
-
-#bg{
-    position:fixed;
-    inset:0;
-    backdrop-filter:blur(6px);
-    background:rgba(255,255,255,.05);
-    z-index:1;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:0;
 }
 
 .card{
-    position:relative;
-    z-index:2;
-    max-width:900px;
-    width:100%;
-    background:rgba(255,255,255,.12);
-    backdrop-filter:blur(20px);
-    border-radius:25px;
-    padding:25px;
-    text-align:center;
-    box-shadow:0 10px 40px rgba(0,0,0,.4);
+position:relative;
+z-index:2;
+max-width:900px;
+width:100%;
+padding:25px;
+border-radius:25px;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(15px);
+box-shadow:0 0 40px rgba(255,255,255,.15);
+text-align:center;
 }
 
 h1{
-    font-size:2.3rem;
-    margin-bottom:15px;
+font-size:42px;
+margin-bottom:20px;
+animation:glow 2s ease-in-out infinite alternate;
 }
 
-#cd{
-    font-size:20px;
-    margin-bottom:20px;
+@keyframes glow{
+
+0%{
+transform:scale(1);
+text-shadow:0 0 10px #fff;
+}
+
+100%{
+transform:scale(1.08);
+text-shadow:0 0 30px gold,
+0 0 60px orange;
+}
+
 }
 
 img{
-    width:100%;
-    border-radius:18px;
-    transition:opacity 1s;
-    box-shadow:0 10px 25px rgba(0,0,0,.4);
+width:100%;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,.45);
+transition:opacity 1s;
 }
 
 p{
-    margin-top:20px;
-    line-height:1.7;
-    font-size:18px;
-}
-
-audio{
-    width:100%;
-    margin-top:20px;
+margin-top:20px;
+font-size:20px;
+line-height:1.7;
 }
 </style>
+
 </head>
 
 <body>
 
 <canvas id="c"></canvas>
 
-<div id="bg"></div>
-
 <div class="card">
 
 <h1>🎉 С 40-летием, Папа! 🎂</h1>
 
-<div id="cd"></div>
-
-<img id="im" src="images/p1.jpg">
+<img id="photo" src="images/p1.jpg">
 
 <p>
 Спасибо за твою любовь, заботу и поддержку.
 Желаю крепкого здоровья, счастья,
-исполнения всех мечтаний и долгих счастливых лет.
-❤️
+радости, исполнения всех мечтаний
+и долгих счастливых лет! ❤️
 </p>
-
-<audio controls>
-<source src="music.mp3">
-</audio>
 
 </div>
 
 <script>
-
-const im=document.getElementById("im");
-const cd=document.getElementById("cd");
 
 const photos=[
 "images/p1.jpg",
@@ -126,38 +115,25 @@ const photos=[
 "images/p7.jpg"
 ];
 
-let i=0;
+let index=0;
 
 setInterval(()=>{
-    i=(i+1)%photos.length;
-    im.style.opacity=0;
 
-    setTimeout(()=>{
-        im.src=photos[i];
-        im.style.opacity=1;
-    },500);
+const img=document.getElementById("photo");
+
+img.style.opacity=0;
+
+setTimeout(()=>{
+
+index=(index+1)%photos.length;
+
+img.src=photos[index];
+
+img.style.opacity=1;
+
+},500);
 
 },3500);
-
-const target=new Date(new Date().getFullYear(),11,31);
-
-setInterval(()=>{
-
-const diff=target-new Date();
-
-if(diff>0){
-
-const days=Math.floor(diff/86400000);
-
-cd.innerHTML="⏳ До праздника осталось "+days+" дней";
-
-}else{
-
-cd.innerHTML="🎉 Сегодня День рождения!";
-
-}
-
-},1000);
 
 // Конфетти
 
@@ -165,26 +141,25 @@ const canvas=document.getElementById("c");
 const ctx=canvas.getContext("2d");
 
 function resize(){
-canvas.width=innerWidth;
-canvas.height=innerHeight;
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
 }
 
 resize();
 
 window.onresize=resize;
 
-const confetti=[];
+const particles=[];
 
-for(let i=0;i<150;i++){
+for(let i=0;i<180;i++){
 
-confetti.push({
+particles.push({
 
 x:Math.random()*canvas.width,
-
 y:Math.random()*canvas.height,
-
 r:2+Math.random()*4,
-
 v:1+Math.random()*3
 
 });
@@ -195,11 +170,16 @@ function draw(){
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-confetti.forEach(p=>{
+particles.forEach(p=>{
 
 p.y+=p.v;
 
-if(p.y>canvas.height)p.y=0;
+if(p.y>canvas.height){
+
+p.y=0;
+p.x=Math.random()*canvas.width;
+
+}
 
 ctx.beginPath();
 
